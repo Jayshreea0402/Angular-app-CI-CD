@@ -1,4 +1,8 @@
 version: 0.2
+env:
+  secret-manager:
+    DOCKERHUB_TOKEN: udemy-angular-cicd:DOCKERHUB_TOKEN
+    DOCKERHUB_USER: udemy-angular-cicd:DOCKERHUB_USER
 phases:
   pre_build:
     commands:
