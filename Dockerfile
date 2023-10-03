@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # STAGE 1: Build the Angular project
-FROM node:12 AS builder 
+FROM node:18.10 AS builder 
 #builder is just a name
 
 # Install Angular CLI
