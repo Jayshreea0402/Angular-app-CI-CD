@@ -12,5 +12,5 @@ phases:
       - docker build -t my-angular-app:latest .
   post_build:
     commands:
-      - docker tag my-angular-app:latest ${DOCKERHUB_USER}/my-angular-app:latest
-      - docker push ${DOCKERHUB_USER}/my-angular-app:latest
+      - docker tag my-angular-app:latest jayshree/my-angular-app:latest
+      - docker push jayshree/my-angular-app:latest
