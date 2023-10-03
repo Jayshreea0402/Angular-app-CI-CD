@@ -5,7 +5,7 @@ FROM node:12 AS builder
 #builder is just a name
 
 # Install Angular CLI
-RUN npm install -g @angular/cli@9.0.6
+RUN npm install -g @angular/cli
 #installing cli so we dont need any dependancy 
 
 # Change my working directory to a custom folder created for the project
