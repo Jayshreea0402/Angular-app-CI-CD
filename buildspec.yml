@@ -1,16 +1,29 @@
 version: 0.2
 env:
-  parameter-store:
-    DOCKERHUB_TOKEN: /dockerhub/token
-    DOCKERHUB_USER: /dockerhub/user
+  variables:
+    ECR_REPO_NAME: angular-cicd
 phases:
   pre_build:
-    commands:
-      - echo ${DOCKERHUB_TOKEN} | docker login -u ${DOCKERHUB_USER} --password-stdin 
+    commands: 
+      # ECR Public Gallery login
+      - aws ecr-public get-login-password --region ap-south-1 | docker login -u AWS --password-stdin public.ecr.aws
+      
+      # ECR login
+      - ECR_MAIN_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+      - aws ecr get-login-password --region ${AWS_REGION} | docker login -u AWS --password-stdin ${ECR_MAIN_URI}
+
+      - ECR_IMAGE_URI="${ECR_MAIN_URI}/${ECR_REPO_NAME}:${CODEBUILD_RESOLVED_SOURCE_VERSION:0:8}"
   build:
     commands:
-      - docker build -t my-angular-app:latest .
+      - docker build -t angular-app:latest .
   post_build:
     commands:
-      - docker tag my-angular-app:latest jayshreea0402/my-angular-app:latest
-      - docker push jayshreea0402/my-angular-app:latest
+      - docker tag angular-app:latest ${ECR_IMAGE_URI}
+      - docker push ${ECR_IMAGE_URI}
+
+      # Generate image definitions file for ECS
+      - printf '[{"name":"angular-app","imageUri":"%s"}]' ${ECR_IMAGE_URI} > imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
